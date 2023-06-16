@@ -13,26 +13,42 @@ interface Seat {
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; // Row numbers
-  seatsPerRow = 7; // Number of seats in each row
-  lastRowSeats = 3; // Number of seats in the last row
+  rows: number[] = []; // Row numbers
+  seatsPerRow: number;
   seats: Seat[] = [];
   numSeats: number;
+  totalSeats: number;
 
-  constructor() {
-    // Initialize seats with default values
+  constructor() {}
+
+  setValues(totalSeats: number, seatsPerRow: number) {
+    this.rows = [];
+    this.totalSeats = totalSeats;
+    this.seatsPerRow = seatsPerRow;
+    this.initializeSeats();
+  }
+
+  initializeSeats() {
+    this.rows = Array.from(
+      { length: Math.ceil(this.totalSeats / this.seatsPerRow) },
+      (_, i) => i + 1
+    );
+
+    this.seats = [];
     let id = 1;
+    let currentSeatNumber = 1;
     for (let row = 1; row <= this.rows.length; row++) {
-      const seatsInRow =
-        row === this.rows.length ? this.lastRowSeats : this.seatsPerRow;
-      for (let seatNumber = 1; seatNumber <= seatsInRow; seatNumber++) {
-        this.seats.push({
-          id,
-          row,
-          seatNumber,
-          isReserved: false,
-        });
-        id++;
+      for (let seatNumber = 1; seatNumber <= this.seatsPerRow; seatNumber++) {
+        if (currentSeatNumber <= this.totalSeats) {
+          this.seats.push({
+            id,
+            row,
+            seatNumber: currentSeatNumber,
+            isReserved: false,
+          });
+          id++;
+          currentSeatNumber++;
+        }
       }
     }
   }
@@ -44,25 +60,37 @@ export class AppComponent {
       return;
     }
 
-    // Try to reserve seats in one row if possible
+    // Try to reserve seats in one row if possible and the number of empty seats is equal to numSeats
     for (let row = 1; row <= this.rows.length; row++) {
       const rowSeats = availableSeats.filter((seat) => seat.row === row);
-      if (rowSeats.length >= numSeats) {
+      if (rowSeats.length === numSeats) {
+        rowSeats.forEach((seat) => (seat.isReserved = true));
+        alert(`Successfully reserved ${numSeats} seats in row ${row}!`);
+        return;
+      }
+    }
+
+    // Try to reserve seats in one row if possible and the number of empty seats is greater than numSeats
+    for (let row = 1; row <= this.rows.length; row++) {
+      const rowSeats = availableSeats.filter((seat) => seat.row === row);
+      if (rowSeats.length > numSeats) {
         rowSeats.slice(0, numSeats).forEach((seat) => (seat.isReserved = true));
         alert(`Successfully reserved ${numSeats} seats in row ${row}!`);
         return;
       }
     }
 
-    // Reserve seats in nearby rows
-    let reservedSeats: Seat[] = [];
-    for (let i = 1; i <= numSeats; i++) {
-      const seat = availableSeats.find(
-        (s) => !reservedSeats.includes(s) && !this.isSeatNextToReserved(s)
+    // Reserve nearby seats
+    const reservedSeats: Seat[] = [];
+    for (let i = 0; i < numSeats; i++) {
+      const nearbySeats = availableSeats.filter(
+        (seat) =>
+          !reservedSeats.includes(seat) && this.isSeatNextToReserved(seat)
       );
-      if (seat) {
-        seat.isReserved = true;
-        reservedSeats.push(seat);
+      if (nearbySeats.length > 0) {
+        const seatToReserve = nearbySeats[0];
+        seatToReserve.isReserved = true;
+        reservedSeats.push(seatToReserve);
       } else {
         // If there are not enough nearby seats available, cancel the reservation
         reservedSeats.forEach((s) => (s.isReserved = false));

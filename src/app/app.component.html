@@ -6,6 +6,49 @@
           <h3 class="mb-0">Train Reservation System</h3>
         </div>
         <div class="card-body">
+          <div class="form-group row">
+            <label for="numSeats" class="col-sm-3 col-form-label"
+              >Total Seats:</label
+            >
+            <div class="col-sm-9 reservationInput">
+              <input
+                style="width: 190px; height: 25px; text-align: center;margin-top:10px"
+                class="reservationInputBox"
+                type="number"
+                class="form-control"
+                id="totalSeats"
+                name="totalSeats"
+                placeholder="Enter Total Number Of Seats"
+                [(ngModel)]="totalSeats"
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="numSeats" class="col-sm-3 col-form-label"
+              >Seats Per Row:</label
+            >
+            <div class="col-sm-9 reservationInput">
+              <input
+                style="width: 190px; height: 25px; text-align: center;margin-top:10px"
+                class="reservationInputBox"
+                type="number"
+                class="form-control"
+                id="seatsPerRow"
+                name="seatsPerRow"
+                placeholder="Enter Seats per Row"
+                [(ngModel)]="seatsPerRow"
+              />
+            </div>
+          </div>
+          <button
+            class="btn btn-primary reserveButton"
+            (click)="setValues(totalSeats, seatsPerRow)"
+            style="margin-top:10px"
+          >
+            Calculate
+          </button>
+        </div>
+        <div class="card-body">
           <p>Select the number of seats you want to reserve:</p>
           <div class="form-group row">
             <label for="numSeats" class="col-sm-3 col-form-label"
