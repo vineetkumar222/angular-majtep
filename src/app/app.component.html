@@ -1,4 +1,4 @@
-<div class="container my-5">
+<!-- <div class="container my-5">
   <div class="row">
     <div class="col-md-9">
       <div class="card">
@@ -112,4 +112,25 @@
       </div>
     </div>
   </div>
+</div> -->
+<h1>Movie Search</h1>
+<input type="text" [(ngModel)]="movieTitle" placeholder="Enter movie title" />
+<button (click)="searchMovie()">Search</button>
+<div *ngIf="movieDetails">
+  <p><strong>Title:</strong> {{ movieDetails.Title }}</p>
+  <p><strong>Year:</strong> {{ movieDetails.Year }}</p>
+  <p><strong>Plot:</strong> {{ movieDetails.Plot }}</p>
+  <p><strong>IMDB Rating:</strong> {{ movieDetails.imdbRating }}</p>
+  <img [src]="movieDetails.Poster" alt="Movie Poster" />
+  <button *ngIf="!isInWatchlist(movieDetails)" (click)="addToWatchlist()">
+    Add to Watchlist
+  </button>
+  <button *ngIf="isInWatchlist(movieDetails)" (click)="removeFromWatchlist()">
+    Remove from Watchlist
+  </button>
 </div>
+<p *ngIf="errorMessage">{{ errorMessage }}</p>
+<h2>My Watchlist</h2>
+<ul>
+  <li *ngFor="let movie of watchlist">{{ movie.Title }}</li>
+</ul>
